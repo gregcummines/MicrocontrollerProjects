@@ -30,6 +30,7 @@
   </PropertyGroup>
   <Import Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />
   <ItemGroup>
+    <Compile Include="CoopDoorTask.cs" />
     <Compile Include="DaylightExtenderTask.cs" />
     <Compile Include="FluidLevelSensor.cs" />
     <Compile Include="InfraredReceiver.cs" />
@@ -44,7 +45,6 @@
     <Compile Include="TemperatureSensorTask.cs" />
     <Compile Include="WaterHeaterTask.cs" />
     <Compile Include="TimerCoopDoorTask.cs" />
-    <Compile Include="LightCoopDoorTask.cs" />
     <Compile Include="DataLoggerTask.cs" />
     <Compile Include="DisplayTask.cs" />
     <Compile Include="CoopHeaterTask.cs" />
