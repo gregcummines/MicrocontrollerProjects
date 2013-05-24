@@ -18,7 +18,11 @@ namespace ChickenCoopAutomation
         private PersistentStorage sdPS = null;
         private static OutputPort led;
 
-        public DataLoggerTask() : base()
+        public DataLoggerTask() 
+        {
+        }
+
+        protected override void DoWork()
         {
             readyToWrite = false;
 
@@ -29,10 +33,7 @@ namespace ChickenCoopAutomation
 
             // Set the SD detect pin
             sdDetectPin = new InputPort((Cpu.Pin)FEZ_Pin.Digital.SD_Detect, false, Port.ResistorMode.PullUp);
-        }
 
-        protected override void DoWork()
-        {
             while (true)
             {
                 const int POLL_TIME = 5000; // log data every interval

@@ -13,27 +13,57 @@ namespace ChickenCoopAutomation
     {
         public static void Main()
         {
+            // Disable garbage collection messages
             Debug.EnableGCMessages(false);
 
+            // Initialize the Real Time Clock
             InitializeDateTime();
 
+            // Start the watchdog timer, so if the code freezes the system will reboot
+#if (!DEBUG)
             StartWatchdog();
+#endif
 
-            StartWaterLevelSensorTask();
-            StartWaterTempSensorTask();
-            StartCoopTempSensorTask();
-            StartLightSensorTask();
-            StartCoopDoorTask();
-            StartWaterHeaterTask();
-            StartCoopHeaterTask();
-            StartDaylightExtenderTask();
-            StartDisplayTask();
-            StartLEDTask();
-            StartFoodLevelTask();
-            StartDataloggerTask();
-            StartWirelessTask();
+            // Start all the tasks for chicken coop automation
+            // Note: Every task will start on its own background thread
+            StartTasks();
 
+            Thread.Sleep(5000);
+
+            foreach (Task task in TaskManager.Instance.Tasks)
+            {
+                string aliveString = "alive";
+                if (!task.thread.IsAlive)
+                    aliveString = "dead";
+                Debug.Print("Thread: " + task.Name + " is " + aliveString);
+            }
+
+            // Sleep forever and let each task thread do the jobs
             Thread.Sleep(Timeout.Infinite);
+        }
+
+        private static void StartTasks()
+        {
+            try
+            {
+                //StartWaterLevelSensorTask();
+                StartWaterTempSensorTask();
+                StartCoopTempSensorTask();
+                //StartLightSensorTask();
+                //StartCoopDoorTask();
+                //StartWaterHeaterTask();
+                //StartCoopHeaterTask();
+                //StartDaylightExtenderTask();
+                //StartDisplayTask();
+                //StartLEDTask();
+                //StartFoodLevelTask();
+                //StartDataloggerTask();
+                //StartWirelessTask();
+            }
+            catch (Exception e)
+            {
+                Debug.Print("Exception caught starting tasks: " + e.Message);
+            }
         }
 
         private static void StartWaterLevelSensorTask()

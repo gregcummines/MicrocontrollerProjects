@@ -10,6 +10,8 @@ namespace ChickenCoopAutomation
         private static SerialPort port;
         private static SerialBuffer buffer;
 
+        public XBeeTask() { }
+
         protected override void DoWork()
         {
             buffer = new SerialBuffer(100);

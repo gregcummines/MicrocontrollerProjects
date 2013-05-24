@@ -25,24 +25,34 @@ namespace ChickenCoopAutomation
         private static InfraredSender _sender;
         private static InfraredReceiver _receiver;
         private static uint[] _pulseWidths;
-        private readonly Timer _signalTimer;
+        private Timer _signalTimer;
         private static DateTime _lastSignalReceived;
         private static bool _foodLevelOK;
+
+        private FEZ_Pin.Interrupt _infraredReceiverInterrupt;
+        private FEZ_Pin.Digital _infraredLEDPin;
+        private FEZ_Pin.PWM _PWMPin;
+        private int _checkTimeInMS;
 
 
         public LowFoodSensorTask(FEZ_Pin.Interrupt infraredReceiverInterrupt, FEZ_Pin.Digital infraredLEDPin, FEZ_Pin.PWM PWMPin, int checkTimeInMS)  
         {
-            _onBoardLed = new OutputPort((Cpu.Pin)FEZ_Pin.Digital.LED, false);
-            _sender = new InfraredSender((Cpu.Pin)infraredLEDPin, true, (Cpu.Pin)PWMPin, 38000);
-            _receiver = new InfraredReceiver((Cpu.Pin)infraredReceiverInterrupt);
-            _receiver.DataReceived += OnDataReceived;
-            _signalTimer = new Timer(SignalCheck, null, checkTimeInMS*2, checkTimeInMS);
-            _foodLevelOK = true;
-            _pulseWidths = new uint[] { 346, 1730, 349, 1758, 348, 1738, 341, 793, 340, 764, 340, 794, 337, 1749, 330, 824, 334, 780, 351 };
+            _infraredReceiverInterrupt = infraredReceiverInterrupt;
+            _infraredLEDPin = infraredLEDPin;
+            _PWMPin = PWMPin;
+            _checkTimeInMS = checkTimeInMS;
         }
 
         protected override void DoWork()
         {
+            _onBoardLed = new OutputPort((Cpu.Pin)FEZ_Pin.Digital.LED, false);
+            _sender = new InfraredSender((Cpu.Pin)_infraredLEDPin, true, (Cpu.Pin)_PWMPin, 38000);
+            _receiver = new InfraredReceiver((Cpu.Pin)_infraredReceiverInterrupt);
+            _receiver.DataReceived += OnDataReceived;
+            _signalTimer = new Timer(SignalCheck, null, _checkTimeInMS * 2, _checkTimeInMS);
+            _foodLevelOK = true;
+            _pulseWidths = new uint[] { 346, 1730, 349, 1758, 348, 1738, 341, 793, 340, 764, 340, 794, 337, 1749, 330, 824, 334, 780, 351 };
+
             _lastSignalReceived = DateTime.Now;
             while (true)
             {

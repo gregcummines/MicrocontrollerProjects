@@ -22,12 +22,12 @@ namespace ChickenCoopAutomation
         {
             _tempSetPointF = tempSetPointF;
             _pinHeaterOutput = pinHeaterOutput;
-
-            CoopData.Instance.CoopTemperatureSetPoint = _tempSetPointF;
         }
 
         protected override void DoWork()
         {
+            CoopData.Instance.CoopTemperatureSetPoint = _tempSetPointF;
+
             _portOutHeater = new OutputPort((Cpu.Pin)_pinHeaterOutput, true);
 
             Thread.Sleep(1000); // wait for sensors to start

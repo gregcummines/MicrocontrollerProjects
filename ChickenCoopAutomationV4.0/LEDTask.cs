@@ -8,21 +8,29 @@ namespace ChickenCoopAutomation
 {
     public class LEDTask : Task
     {
-        private OutputPort outputGreenLED;
-        private OutputPort outputYellowLED;
-        private OutputPort outputRedLED;
+        private OutputPort _outputGreenLED;
+        private OutputPort _outputYellowLED;
+        private OutputPort _outputRedLED;
+
+        private FEZ_Pin.Digital _pinGreenLED;
+        private FEZ_Pin.Digital _pinYellowLED;
+        private FEZ_Pin.Digital _pinRedLED;
 
         public LEDTask(FEZ_Pin.Digital pinGreenLED, 
                        FEZ_Pin.Digital pinYellowLED,
                        FEZ_Pin.Digital pinRedLED) : base()
         {
-            outputGreenLED = new OutputPort((Cpu.Pin)pinGreenLED, true);
-            outputYellowLED = new OutputPort((Cpu.Pin)pinYellowLED, true);
-            outputRedLED = new OutputPort((Cpu.Pin)pinRedLED, true);
+            _pinGreenLED = pinGreenLED;
+            _pinYellowLED = pinYellowLED;
+            _pinRedLED = pinRedLED;            
         }
 
         protected override void DoWork()
         {
+            _outputGreenLED = new OutputPort((Cpu.Pin)_pinGreenLED, true);
+            _outputYellowLED = new OutputPort((Cpu.Pin)_pinYellowLED, true);
+            _outputRedLED = new OutputPort((Cpu.Pin)_pinRedLED, true);
+
             while (true)
             {
                 UpdateLEDs();
@@ -33,20 +41,20 @@ namespace ChickenCoopAutomation
         private void UpdateLEDs()
         {
             // reset the LEDs, we will turn on the one needed below
-            outputGreenLED.Write(true);
-            outputYellowLED.Write(true);
-            outputRedLED.Write(true);
+            _outputGreenLED.Write(true);
+            _outputYellowLED.Write(true);
+            _outputRedLED.Write(true);
 
             switch (CoopData.Instance.DoorState)
             {
                 case CoopData.DoorStateEnum.Unknown:
-                    outputYellowLED.Write(false);
+                    _outputYellowLED.Write(false);
                     break;
                 case CoopData.DoorStateEnum.Open:
-                    outputGreenLED.Write(false);
+                    _outputGreenLED.Write(false);
                     break;
                 case CoopData.DoorStateEnum.Closed:
-                    outputRedLED.Write(false);
+                    _outputRedLED.Write(false);
                     break;
             }
         }

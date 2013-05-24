@@ -29,7 +29,12 @@ namespace ChickenCoopAutomation
             while (true)
             {
                 double temp = thermometerWatcher.Thermometer.ReadTemp(Thermometer.DataToF);
-                Debug.Print("Temp:" + _tempSensorType.ToString() + " " + temp.ToString("F1") + "F");
+                string tempString = temp.ToString("F2") + "F";
+                if (temp == 185.0 || temp == Thermometer.InvalidData) {
+                    tempString = "Invalid Data";
+                }
+                
+                Debug.Print("Temp:" + _tempSensorType.ToString() + " " + tempString);
 
                 if (temp != Thermometer.InvalidData)
                 {

@@ -6,13 +6,21 @@ namespace ChickenCoopAutomation
 {
     public abstract class Task
     {
-        private Thread thread;
+        public Thread thread;
         private int ID;
 
         public Task()
         {
             Random rdm = new Random();
             ID = rdm.Next(10000);
+        }
+
+        public string Name
+        {
+            get
+            {
+                return this.GetType().ToString();
+            }
         }
 
         public void Start()

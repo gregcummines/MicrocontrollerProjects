@@ -7,20 +7,34 @@ using GHIElectronics.NETMF.FEZ;
 namespace ChickenCoopAutomation
 {
     /// <summary>
-    /// class to display coop information
+    /// Class to display coop information on an LCD display
     /// </summary>
     public class DisplayTask : Task
     {
         private LCD lcd;
 
+        private FEZ_Pin.Digital _D4;
+        private FEZ_Pin.Digital _D5;
+        private FEZ_Pin.Digital _D6;
+        private FEZ_Pin.Digital _D7;
+        private FEZ_Pin.Digital _E;
+        private FEZ_Pin.Digital _RS;
+
         public DisplayTask(FEZ_Pin.Digital D4, FEZ_Pin.Digital D5, FEZ_Pin.Digital D6, FEZ_Pin.Digital D7, FEZ_Pin.Digital E, FEZ_Pin.Digital RS)
             : base()
         {
-            lcd = new LCD(LCD.LCDType.LCD4x20, D4, D5, D6, D7, E, RS);
+            _D4 = D4;
+            _D5 = D5;
+            _D6 = D6;
+            _D7 = D7;
+            _E = E;
+            _RS = RS;
         }
 
         protected override void DoWork()
         {
+            lcd = new LCD(LCD.LCDType.LCD4x20, _D4, _D5, _D6, _D7, _E, _RS);
+
             lcd.SetCursor(1, 1);
             lcd.Print("Coop of the Future!!");
             lcd.SetCursor(2, 1);
