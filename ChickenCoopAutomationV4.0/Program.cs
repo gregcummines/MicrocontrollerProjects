@@ -58,7 +58,7 @@ namespace ChickenCoopAutomation
                 //StartLEDTask();
                 //StartFoodLevelTask();
                 //StartDataloggerTask();
-                //StartWirelessTask();
+                StartWirelessTask();
             }
             catch (Exception e)
             {
@@ -109,13 +109,13 @@ namespace ChickenCoopAutomation
             if (!bFoodLevelOK)
             {
                 Debug.Print("Detected Food level low at " + dateTimeChanged.ToString());
-                CoopData.Instance.FoodLevelLow = true;
+                CoopData.Instance.FoodLevelLow = 1;
                 //blueLED.Write(true);
             }
             else
             {
                 Debug.Print("Detected Food level corrected at " + dateTimeChanged.ToString());
-                CoopData.Instance.FoodLevelLow = false;
+                CoopData.Instance.FoodLevelLow = 0;
                 //blueLED.Write(false);
             }
         }
@@ -178,7 +178,7 @@ namespace ChickenCoopAutomation
         private static void StartCoopTempSensorTask()
         {
             // Startup the coop temperature sensor task
-            TemperatureSensorTask tempSensorCoopTask = new TemperatureSensorTask(FEZ_Pin.Digital.Di9, TemperatureSensorTask.TemperatureSensorType.Coop);
+            TemperatureSensorTask tempSensorCoopTask = new TemperatureSensorTask(FEZ_Pin.Digital.Di20, TemperatureSensorTask.TemperatureSensorType.Coop);
             tempSensorCoopTask.Start();
             TaskManager.Instance.AddTask(tempSensorCoopTask);
         }
@@ -201,9 +201,10 @@ namespace ChickenCoopAutomation
             // set it at the beginning of your application from the RTC.
             // If it was NOT set before and currently running using 
             // the battery (not exhausted), set it to a fixed time.
-            //RealTimeClock.SetTime(new DateTime(2011, 11, 26, 18, 51, 0));
+            //RealTimeClock.SetTime(new DateTime(2013, 5, 25, 12, 05, 0));
             DateTime rtcDateTime = RealTimeClock.GetTime();
             Utility.SetLocalTime(rtcDateTime);
+            Debug.Print("DateTime is: " + rtcDateTime.ToString());
         }
 
         private static Thread restartThread = null;

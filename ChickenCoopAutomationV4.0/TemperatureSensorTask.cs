@@ -41,10 +41,10 @@ namespace ChickenCoopAutomation
                     switch (_tempSensorType)
                     {
                         case TemperatureSensorType.Coop:
-                            CoopData.Instance.CoopTemperature = temp;
+                            CoopData.Instance.CoopTemperature = (float)temp;
                             break;
                         case TemperatureSensorType.Water:
-                            CoopData.Instance.WaterTemperature = temp;
+                            CoopData.Instance.WaterTemperature = (float)temp;
                             break;
                     }
 

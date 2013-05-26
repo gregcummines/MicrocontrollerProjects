@@ -7,40 +7,26 @@ using GHIElectronics.NETMF.FEZ;
 namespace ChickenCoopAutomation
 {
     /// <summary>
-    /// Class to display coop information on an LCD display
+    /// class to display coop information
     /// </summary>
     public class DisplayTask : Task
     {
         private LCD lcd;
 
-        private FEZ_Pin.Digital _D4;
-        private FEZ_Pin.Digital _D5;
-        private FEZ_Pin.Digital _D6;
-        private FEZ_Pin.Digital _D7;
-        private FEZ_Pin.Digital _E;
-        private FEZ_Pin.Digital _RS;
-
         public DisplayTask(FEZ_Pin.Digital D4, FEZ_Pin.Digital D5, FEZ_Pin.Digital D6, FEZ_Pin.Digital D7, FEZ_Pin.Digital E, FEZ_Pin.Digital RS)
             : base()
         {
-            _D4 = D4;
-            _D5 = D5;
-            _D6 = D6;
-            _D7 = D7;
-            _E = E;
-            _RS = RS;
+            lcd = new LCD(LCD.LCDType.LCD4x20, D4, D5, D6, D7, E, RS);
         }
 
         protected override void DoWork()
         {
-            lcd = new LCD(LCD.LCDType.LCD4x20, _D4, _D5, _D6, _D7, _E, _RS);
-
             lcd.SetCursor(1, 1);
             lcd.Print("Coop of the Future!!");
             lcd.SetCursor(2, 1);
             lcd.Print("Version 4.0");
             lcd.SetCursor(3, 1);
-            lcd.Print("Built on 11 /27/11");
+            lcd.Print("Built on 11/27/11");
             lcd.SetCursor(4, 1);
             lcd.Print("Loading");
             for (int i = 0; i < 13; i++)
@@ -64,51 +50,80 @@ namespace ChickenCoopAutomation
             lcd.Clear();
             PrintDateTime(lcd);
             PrintCoopTemp(lcd);
-            PrintLightLevel(lcd);
             PrintWaterTemp(lcd);
             PrintWaterHeaterSetTemp(lcd);
+            PrintLightLevel(lcd);
+            PrintFoodLevel(lcd);
         }
         
         private static void PrintDateTime(LCD lcd)
         {
             DateTime dateTime = DateTime.Now;
             string strTime = GetFormattedTime(dateTime);
-            string strDate = dateTime.Month + "/" + dateTime.Day + "/" + dateTime.Year;
+            string strDate = dateTime.Month.ToString() + "/" + dateTime.Day.ToString() + "/" + dateTime.Year.ToString();
             lcd.SetCursor(1, 1);
             lcd.Print(strDate + " " + strTime);
         }
 
         private static void PrintCoopTemp(LCD lcd)
         {
+            string strTemp = "NA";
             lcd.SetCursor(2, 1);
-            lcd.Print("Coop:" + CoopData.Instance.CoopTemperature.ToString("F0") + "F");
+            if (CoopData.Instance.CoopTemperature != CoopData.InvalidData)
+            {
+                strTemp = CoopData.Instance.CoopTemperature.ToString("F0") + "F";                
+            }
+            lcd.Print("Coop:" + strTemp);
         }
 
         private static void PrintWaterTemp(LCD lcd)
         {
+            string strTemp = "NA";
             lcd.SetCursor(2, 11);
-            lcd.Print("Wtr:" + CoopData.Instance.WaterTemperature.ToString("F0") + "F");
+            if (CoopData.Instance.WaterTemperature != CoopData.InvalidData)
+            {
+                strTemp = CoopData.Instance.WaterTemperature.ToString("F0") + "F";
+            }
+            lcd.Print("Wtr:" + strTemp);
         }
 
         private static void PrintWaterHeaterSetTemp(LCD lcd)
         {
+            string strData = "NA";
             lcd.SetCursor(3, 1);
-            lcd.Print("Htr:" + CoopData.Instance.CoopTemperatureSetPoint.ToString("F0") + "F");
+            if (CoopData.Instance.WaterTemperatureSetPoint != CoopData.InvalidData)
+            {
+                strData = CoopData.Instance.WaterTemperatureSetPoint.ToString("F0") + "F";
+            }
+            lcd.Print("Htr:" + strData);
         }
 
         private static void PrintLightLevel(LCD lcd)
         {
+            string strData = "NA";
             lcd.SetCursor(3, 11);
-            lcd.Print("Light:" + CoopData.Instance.InstantLightReading.ToString());
+            if (CoopData.Instance.InstantLightReading != CoopData.InvalidData)
+            {
+                strData = CoopData.Instance.InstantLightReading.ToString();
+            }
+            lcd.Print("Light:" + strData);
         }
 
         private static void PrintFoodLevel(LCD lcd)
         {
             lcd.SetCursor(4, 1);
-            if (CoopData.Instance.FoodLevelLow)
-                lcd.Print("Food:Low");
-            else
-                lcd.Print("Food:OK");
+            switch(CoopData.Instance.FoodLevelLow)
+            {
+                case 0:
+                    lcd.Print("Food:OK");
+                    break;
+                case 1:
+                    lcd.Print("Food:Low");
+                    break;
+                case CoopData.InvalidData:
+                    lcd.Print("Food:NA");
+                    break;
+            }
         }
 
         /// <summary>
