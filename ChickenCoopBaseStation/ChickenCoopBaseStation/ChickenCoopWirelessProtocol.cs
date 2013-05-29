@@ -52,6 +52,7 @@ namespace ChickenCoopBaseStation
             // put the command in a single byte - byte array
             byte[] commandBuffer = new byte[1] { (byte)command };
             // write the command to the SerialPort
+            _waitHandle.Reset();
             port.Write(commandBuffer, 0, commandBuffer.Length);
             // wait for a response (the signal will be set in the DataReceived event)
             _waitHandle.WaitOne(timeOut);
@@ -158,6 +159,7 @@ namespace ChickenCoopBaseStation
                 byte[] dataWaterHeaterOn = new byte[1];
                 byte[] dataDoorState = new byte[4];
                 byte[] dataDoorOperatingMode = new byte[4];
+                byte[] dataWaterLevel = new byte[4];
 
                 Array.Copy(_data, 0, dataWaterTemperature, 0, dataWaterTemperature.Length);
                 Array.Copy(_data, 4, dataCoopTemperature, 0, dataCoopTemperature.Length);
@@ -170,6 +172,7 @@ namespace ChickenCoopBaseStation
                 Array.Copy(_data, 33, dataWaterHeaterOn, 0, dataWaterHeaterOn.Length);
                 Array.Copy(_data, 34, dataDoorState, 0, dataDoorState.Length);
                 Array.Copy(_data, 38, dataDoorOperatingMode, 0, dataDoorOperatingMode.Length);
+                Array.Copy(_data, 42, dataWaterLevel, 0, dataWaterLevel.Length);
 
                 coopData.WaterTemperature = BitConverter.ToSingle(dataWaterTemperature);
                 coopData.CoopTemperature = BitConverter.ToSingle(dataCoopTemperature);
@@ -184,6 +187,7 @@ namespace ChickenCoopBaseStation
                 coopData.WaterHeaterOn = BitConverter.ToBoolean(dataWaterHeaterOn);
                 coopData.DoorState = (CoopData.DoorStateEnum)BitConverter.ToInt32(dataDoorState);
                 coopData.DoorOperatingMode = (CoopData.DoorOperatingModeEnum)BitConverter.ToInt32(dataDoorOperatingMode);
+                coopData.WaterLevel = BitConverter.ToInt32(dataWaterLevel);
 
                 _data = null;
             }
@@ -197,14 +201,14 @@ namespace ChickenCoopBaseStation
 			{
 
 				int bytesToRead = port.BytesToRead;
-
+                
 				// Create the buffer when we have read the first byte, which is the command
 				if (_data == null)
 				{
 					// Read the first byte to get the payload size
 					// The payload size = command (1 byte) + data (n bytes)
 					_payLoadSize = (byte)port.ReadByte();
-
+                   
 					// Create a buffer big enough to hold the payload
 					_data = new byte[_payLoadSize];
 				}
@@ -220,7 +224,13 @@ namespace ChickenCoopBaseStation
 					// This is not expected, so throw an exception
 					if (bytesToRead + _endIndex > _payLoadSize)
 					{
-						throw new Exception("Payload larger than expected!");
+                        // Not what we expected, but read it and throw it all away. 
+                        port.DiscardInBuffer();
+
+                        _data = null;
+                        _payLoadSize = 0;
+                        _endIndex = 0;
+                        return;
 					}
 
 					port.Read(_data, _endIndex, bytesToRead);

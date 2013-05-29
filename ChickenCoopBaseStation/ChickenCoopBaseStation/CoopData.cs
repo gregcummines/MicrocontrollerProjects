@@ -23,6 +23,7 @@ namespace ChickenCoopBaseStation
         public int InstantLightReading { get; set; }
         public int AverageLightReading { get; set; }
         public DateTime CoopDateTime { get; set; }
+        public int WaterLevel { get; set; }
 
         public CoopData()
         {
@@ -33,6 +34,7 @@ namespace ChickenCoopBaseStation
             InstantLightReading = InvalidData;
             AverageLightReading = InvalidData;
             FoodLevelLow = InvalidData;
+            WaterLevel = InvalidData;
         }
     }
 }

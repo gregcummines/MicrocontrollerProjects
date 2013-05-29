@@ -40,6 +40,7 @@ namespace ChickenCoopBaseStation
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            panelCommunicationsStatus.BackColor = Color.Red;
             m_temperatureGraphPane = zgTemp.GraphPane;
             m_lightGraphPane = zgLight.GraphPane;
             CreateTemperatureLineGraph();
@@ -168,52 +169,64 @@ namespace ChickenCoopBaseStation
                     DateTime dateTimeStart = DateTime.Now;
 
                     _coopData = ChickenCoopWirelessProtocol.Instance.GetAllStatistics();
-
-                    lblWaterTemp.Text = _coopData.WaterTemperature.ToString("F2") + "F";
-                    lblCoopTemp.Text = _coopData.CoopTemperature.ToString("F2") + "F";
-                    lblWaterSetTemp.Text = _coopData.WaterTemperatureSetPoint.ToString("F0") + "F";
-                    lblAvgLightLevel.Text = _coopData.AverageLightReading.ToString();
-                    lblInstantLightLevel.Text = _coopData.InstantLightReading.ToString();
-                    lblCoopDateTime.Text = _coopData.CoopDateTime.ToString();
-                    lblDaylightBulbOn.Text = _coopData.CoopLightOn.ToString();
-                    lblDoorState.Text = _coopData.DoorState.ToString();
-                    lblFoodLevel.Text = _coopData.FoodLevelLow == 0 ? "OK" : "Low";
-
-                    if (_foodLevelLowLastReading != _coopData.FoodLevelLow)
+                    if (_coopData != null)
                     {
-                        lblFoodLevelLastChanged.Text = DateTime.Now.ToString();
-                        _foodLevelLowLastReading = _coopData.FoodLevelLow;
+                        lblWaterTemp.Text = (_coopData.WaterTemperature != CoopData.InvalidData) ? _coopData.WaterTemperature.ToString("F2") + "F" : "Unknown";
+                        lblCoopTemp.Text = (_coopData.CoopTemperature != CoopData.InvalidData) ? _coopData.CoopTemperature.ToString("F2") + "F" : "Unknown";
+                        lblWaterSetTemp.Text = (_coopData.WaterTemperatureSetPoint != CoopData.InvalidData) ? _coopData.WaterTemperatureSetPoint.ToString("F0") + "F" : "Unknown";
+                        lblAvgLightLevel.Text = (_coopData.AverageLightReading != CoopData.InvalidData) ? _coopData.AverageLightReading.ToString() : "Unknown";
+                        lblInstantLightLevel.Text = (_coopData.InstantLightReading != CoopData.InvalidData) ? _coopData.InstantLightReading.ToString() : "Unknown";
+                        lblCoopDateTime.Text = _coopData.CoopDateTime.ToString();
+                        lblDaylightBulbOn.Text = _coopData.CoopLightOn.ToString();
+                        lblDoorState.Text = _coopData.DoorState.ToString();
+                        lblFoodLevel.Text = _coopData.FoodLevelLow == 0 ? "OK" : "Low";
+
+                        if (_foodLevelLowLastReading != _coopData.FoodLevelLow)
+                        {
+                            lblFoodLevelLastChanged.Text = DateTime.Now.ToString();
+                            _foodLevelLowLastReading = _coopData.FoodLevelLow;
+                        }
+
+                        lblWaterHeaterOn.Text = _coopData.WaterHeaterOn.ToString();
+
+                        DateTime dateTimeEnd = DateTime.Now;
+
+                        lblLastUpdated.Text = dateTimeEnd.ToString();
+
+                        _timeToUpdate = dateTimeEnd - dateTimeStart;
+                        lblTimeToUpdate.Text = _timeToUpdate.Milliseconds.ToString() + "mS";
+
+                        LogData();
+
+                        double x = (double)new XDate(dateTimeEnd);
+
+                        //m_graphPane.CurveList["Light"].AddPoint(x,Convert.ToDouble(_coopData.AverageLightReading));
+                        if (_coopData.WaterTemperature != CoopData.InvalidData)
+                            m_temperatureGraphPane.CurveList["WaterTemp"].AddPoint(x, _coopData.WaterTemperature);
+                        if (_coopData.CoopTemperature != CoopData.InvalidData)
+                            m_temperatureGraphPane.CurveList["CoopTemp"].AddPoint(x, _coopData.CoopTemperature);
+                        if (_coopData.AverageLightReading != CoopData.InvalidData) ;
+                        m_lightGraphPane.CurveList["AverageLight"].AddPoint(x, Convert.ToDouble(_coopData.AverageLightReading));
+                        if (_coopData.InstantLightReading != CoopData.InvalidData)
+                            m_lightGraphPane.CurveList["InstantLight"].AddPoint(x, Convert.ToDouble(_coopData.InstantLightReading));
+                        UpdateGraphs();
+
+                        statusLabel.Text = "Updated data at " + dateTimeEnd.ToString();
+
+                        UpdateErrorStatus();
+
+                        //if (_errorForm != null)
+                        //{
+                        //    _errorForm.Close();
+                        //    _errorForm = null;
+                        //}
+                        panelCommunicationsStatus.BackColor = Color.Green;
                     }
-                    
-                    lblWaterHeaterOn.Text = _coopData.WaterHeaterOn.ToString();
-
-                    DateTime dateTimeEnd = DateTime.Now;
-
-                    lblLastUpdated.Text = dateTimeEnd.ToString();
-
-                    _timeToUpdate = dateTimeEnd - dateTimeStart;
-                    lblTimeToUpdate.Text = _timeToUpdate.Milliseconds.ToString() + "mS";
-
-                    LogData();
-
-                    double x = (double) new XDate(dateTimeEnd);
-
-                    //m_graphPane.CurveList["Light"].AddPoint(x,Convert.ToDouble(_coopData.AverageLightReading));
-                    m_temperatureGraphPane.CurveList["WaterTemp"].AddPoint(x, _coopData.WaterTemperature);
-                    m_temperatureGraphPane.CurveList["CoopTemp"].AddPoint(x, _coopData.CoopTemperature);
-                    m_lightGraphPane.CurveList["AverageLight"].AddPoint(x, Convert.ToDouble(_coopData.AverageLightReading));
-                    m_lightGraphPane.CurveList["InstantLight"].AddPoint(x, Convert.ToDouble(_coopData.InstantLightReading));
-                    UpdateGraphs();
-                    
-                    statusLabel.Text = "Updated data at " + dateTimeEnd.ToString();
-
-                    UpdateErrorStatus();
-
-                    //if (_errorForm != null)
-                    //{
-                    //    _errorForm.Close();
-                    //    _errorForm = null;
-                    //}
+                    else
+                    {
+                        statusLabel.Text = "Failure communicating with Remote Chicken Coop Server...";
+                        panelCommunicationsStatus.BackColor = Color.Red;
+                    }
                 }
             }
             catch (Exception exc)
@@ -221,7 +234,7 @@ namespace ChickenCoopBaseStation
                 string error = "Failing updating data..." + exc.Message;
                 Debug.Print(error);
                 statusLabel.Text = error;
-
+                panelCommunicationsStatus.BackColor = Color.Red;
                 //if ((_errorForm == null) || (!_errorForm.Created))
                 //{
                 //    _errorForm = new ErrorStatusForm();

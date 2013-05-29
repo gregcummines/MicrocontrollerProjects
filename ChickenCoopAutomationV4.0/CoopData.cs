@@ -23,6 +23,7 @@ namespace ChickenCoopAutomation
         public int FoodLevelLow { get; set; }
         public int InstantLightReading { get; set; }
         public int AverageLightReading { get; set; }
+        public int WaterLevel { get; set; }
 
         private CoopData() 
         {
@@ -33,6 +34,7 @@ namespace ChickenCoopAutomation
             InstantLightReading = InvalidData;
             AverageLightReading = InvalidData;
             FoodLevelLow = InvalidData;
+            WaterLevel = InvalidData;
         }
 
         public static CoopData Instance

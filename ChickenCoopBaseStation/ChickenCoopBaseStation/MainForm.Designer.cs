@@ -65,6 +65,7 @@
             this.zgTemp = new ZedGraph.ZedGraphControl();
             this.zgLight = new ZedGraph.ZedGraphControl();
             this.timerCheckEmail = new System.Windows.Forms.Timer(this.components);
+            this.panelCommunicationsStatus = new System.Windows.Forms.Panel();
             this.groupBox1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -433,7 +434,7 @@
             this.zgTemp.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.zgTemp.Location = new System.Drawing.Point(445, 0);
+            this.zgTemp.Location = new System.Drawing.Point(448, 9);
             this.zgTemp.Name = "zgTemp";
             this.zgTemp.ScrollGrace = 0D;
             this.zgTemp.ScrollMaxX = 0D;
@@ -442,14 +443,14 @@
             this.zgTemp.ScrollMinX = 0D;
             this.zgTemp.ScrollMinY = 0D;
             this.zgTemp.ScrollMinY2 = 0D;
-            this.zgTemp.Size = new System.Drawing.Size(743, 619);
+            this.zgTemp.Size = new System.Drawing.Size(731, 600);
             this.zgTemp.TabIndex = 3;
             // 
             // zgLight
             // 
             this.zgLight.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.zgLight.Location = new System.Drawing.Point(0, 378);
+            this.zgLight.Location = new System.Drawing.Point(12, 378);
             this.zgLight.Name = "zgLight";
             this.zgLight.ScrollGrace = 0D;
             this.zgLight.ScrollMaxX = 0D;
@@ -458,13 +459,25 @@
             this.zgLight.ScrollMinX = 0D;
             this.zgLight.ScrollMinY = 0D;
             this.zgLight.ScrollMinY2 = 0D;
-            this.zgLight.Size = new System.Drawing.Size(439, 238);
+            this.zgLight.Size = new System.Drawing.Size(427, 231);
             this.zgLight.TabIndex = 4;
             // 
             // timerCheckEmail
             // 
             this.timerCheckEmail.Interval = 10000;
             this.timerCheckEmail.Tick += new System.EventHandler(this.timerCheckEmail_Tick);
+            // 
+            // panelCommunicationsStatus
+            // 
+            this.panelCommunicationsStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelCommunicationsStatus.BackColor = System.Drawing.Color.DarkRed;
+            this.panelCommunicationsStatus.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelCommunicationsStatus.Location = new System.Drawing.Point(0, 0);
+            this.panelCommunicationsStatus.Name = "panelCommunicationsStatus";
+            this.panelCommunicationsStatus.Size = new System.Drawing.Size(1188, 616);
+            this.panelCommunicationsStatus.TabIndex = 5;
             // 
             // MainForm
             // 
@@ -475,6 +488,7 @@
             this.Controls.Add(this.zgTemp);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.panelCommunicationsStatus);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
             this.Text = "Chicken Coop Base Station";
@@ -526,6 +540,7 @@
         private System.Windows.Forms.Label lblFoodLevelLastChanged;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Timer timerCheckEmail;
+        private System.Windows.Forms.Panel panelCommunicationsStatus;
 
     }
 }

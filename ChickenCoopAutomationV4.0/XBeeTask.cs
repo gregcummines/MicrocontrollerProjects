@@ -26,9 +26,10 @@ namespace ChickenCoopAutomation
         static void port_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
             // Command received by the desktop PC; let's process it and send some data back
-
             byte[] firstByte = new byte[1];
             port.Read(firstByte, 0, 1);
+
+            Debug.Print("Data Received by XBee: Command[" + firstByte[0].ToString() + "]");
 
             ChickenCoopCommandEnum command = (ChickenCoopCommandEnum)(byte)firstByte[0];
 
@@ -38,54 +39,58 @@ namespace ChickenCoopAutomation
 
             ArrayList list = new ArrayList();
 
-            switch(command)
+            switch (command)
             {
-                
+
                 case ChickenCoopCommandEnum.GetWaterTemperature:
                     temp = BitConverter.GetBytes(CoopData.Instance.WaterTemperature);
-                    payloadSize = 4;
+                    payloadSize = (byte)temp.Length;
                     break;
                 case ChickenCoopCommandEnum.GetCoopTemperature:
                     temp = BitConverter.GetBytes(CoopData.Instance.CoopTemperature);
-                    payloadSize = 4;
+                    payloadSize = (byte)temp.Length;
                     break;
                 case ChickenCoopCommandEnum.GetWaterTemperatureSetPoint:
                     temp = BitConverter.GetBytes(CoopData.Instance.WaterTemperatureSetPoint);
-                    payloadSize = 4;
+                    payloadSize = (byte)temp.Length;
                     break;
                 case ChickenCoopCommandEnum.GetAverageLightReading:
                     temp = BitConverter.GetBytes(CoopData.Instance.AverageLightReading);
-                    payloadSize = 4;
+                    payloadSize = (byte)temp.Length;
                     break;
                 case ChickenCoopCommandEnum.GetInstantLightReading:
                     temp = BitConverter.GetBytes(CoopData.Instance.InstantLightReading);
-                    payloadSize = 4;
+                    payloadSize = (byte)temp.Length;
                     break;
                 case ChickenCoopCommandEnum.GetCoopDateTime:
                     DateTime now = DateTime.Now;
                     long ticks = now.Ticks;
                     temp = BitConverter.GetBytes(ticks);
-                    payloadSize = 8;
+                    payloadSize = (byte)temp.Length;
                     break;
                 case ChickenCoopCommandEnum.GetCoopLightOn:
                     temp = BitConverter.GetBytes(CoopData.Instance.CoopLightOn);
-                    payloadSize = 1;
+                    payloadSize = (byte)temp.Length;
                     break;
                 case ChickenCoopCommandEnum.GetFoodLevelLow:
                     temp = BitConverter.GetBytes(CoopData.Instance.FoodLevelLow);
-                    payloadSize = 4;
+                    payloadSize = (byte)temp.Length;
                     break;
                 case ChickenCoopCommandEnum.GetWaterHeaterOn:
                     temp = BitConverter.GetBytes(CoopData.Instance.WaterHeaterOn);
-                    payloadSize = 1;
+                    payloadSize = (byte)temp.Length;
                     break;
                 case ChickenCoopCommandEnum.GetDoorState:
                     temp = BitConverter.GetBytes((int)CoopData.Instance.DoorState);
-                    payloadSize = 4;
+                    payloadSize = (byte)temp.Length;
                     break;
                 case ChickenCoopCommandEnum.GetDoorOperatingMode:
                     temp = BitConverter.GetBytes((int)CoopData.Instance.DoorOperatingMode);
-                    payloadSize = 4;
+                    payloadSize = (byte)temp.Length;
+                    break;
+                case ChickenCoopCommandEnum.GetWaterLevel:
+                    temp = BitConverter.GetBytes((int)CoopData.Instance.WaterLevel);
+                    payloadSize = (byte)temp.Length;
                     break;
                 case ChickenCoopCommandEnum.GetAllStats:
                     list.Add(BitConverter.GetBytes(CoopData.Instance.WaterTemperature));
@@ -101,28 +106,32 @@ namespace ChickenCoopAutomation
                     list.Add(BitConverter.GetBytes(CoopData.Instance.WaterHeaterOn));
                     list.Add(BitConverter.GetBytes((int)CoopData.Instance.DoorState));
                     list.Add(BitConverter.GetBytes((int)CoopData.Instance.DoorOperatingMode));
-                    payloadSize = 42;
-                    temp = new byte[payloadSize];
+                    list.Add(BitConverter.GetBytes((int)CoopData.Instance.WaterLevel));
+                                     
                     ArrayList newList = new ArrayList();
                     foreach (byte[] bytes in list)
                     {
                         foreach (byte b in bytes)
                         {
                             newList.Add(b);
+                            payloadSize++;
                         }
                     }
+                    temp = new byte[payloadSize];
                     newList.CopyTo(temp);
                     break;
                 default:
                     temp = new byte[1];
                     temp[0] = 5;    // invalid command
                     payloadSize = 1;
+                    port.DiscardInBuffer();
                     break;
             }
 
             data = new byte[payloadSize + 1];
             data[0] = payloadSize;  // first byte is size of the payload
             Array.Copy(temp, 0, data, 1, temp.Length);
+            Debug.Print("XBee Sending Data: " + BitConverter.ToString(data));
             port.Write(data, 0, data.Length);
         }
     }

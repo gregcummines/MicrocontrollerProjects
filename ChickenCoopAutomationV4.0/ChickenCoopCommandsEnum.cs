@@ -20,5 +20,6 @@ namespace ChickenCoopAutomation
         GetInstantLightReading = 19,
         GetAverageLightReading = 20,
         GetAllStats = 21,
+        GetWaterLevel = 22,
     }
 }
