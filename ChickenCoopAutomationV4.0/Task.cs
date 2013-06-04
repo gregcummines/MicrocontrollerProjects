@@ -23,9 +23,10 @@ namespace ChickenCoopAutomation
             }
         }
 
-        public void Start()
+        public void Start(ThreadPriority priority = ThreadPriority.Normal)
         {
             thread = new Thread(DoWork);
+            thread.Priority = priority;
             thread.Start();
         }
 

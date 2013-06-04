@@ -23,7 +23,6 @@ namespace ChickenCoopAutomation
 #if (!DEBUG)
             StartWatchdog();
 #endif
-
             // Start all the tasks for chicken coop automation
             // Note: Every task will start on its own background thread
             StartTasks();
@@ -54,7 +53,7 @@ namespace ChickenCoopAutomation
                 //StartWaterHeaterTask();
                 //StartCoopHeaterTask();
                 //StartDaylightExtenderTask();
-                //StartDisplayTask();
+                StartDisplayTask();
                 //StartLEDTask();
                 //StartFoodLevelTask();
                 //StartDataloggerTask();
@@ -131,8 +130,12 @@ namespace ChickenCoopAutomation
 
         private static void StartDisplayTask()
         {
-            //DisplayTask(FEZ_Pin.Digital D4, FEZ_Pin.Digital D5, FEZ_Pin.Digital D6, FEZ_Pin.Digital D7, FEZ_Pin.Digital E, FEZ_Pin.Digital RS)
-            DisplayTask displayTask = new DisplayTask(FEZ_Pin.Digital.Di46, FEZ_Pin.Digital.Di48, FEZ_Pin.Digital.Di42, FEZ_Pin.Digital.Di44, FEZ_Pin.Digital.Di52, FEZ_Pin.Digital.Di50);              /*LCD Display*/
+            DisplayTask displayTask = new DisplayTask(FEZ_Pin.Digital.Di46,  // D4
+                                                      FEZ_Pin.Digital.Di48,  // D5
+                                                      FEZ_Pin.Digital.Di42,  // D6
+                                                      FEZ_Pin.Digital.Di44,  // D7
+                                                      FEZ_Pin.Digital.Di52,  // E,
+                                                      FEZ_Pin.Digital.Di50); // RS              /*LCD Display*/
             displayTask.Start();
             TaskManager.Instance.AddTask(displayTask);
         }

@@ -13,7 +13,12 @@ namespace ChickenCoopAutomation
     {
         private LCD lcd;
 
-        public DisplayTask(FEZ_Pin.Digital D4, FEZ_Pin.Digital D5, FEZ_Pin.Digital D6, FEZ_Pin.Digital D7, FEZ_Pin.Digital E, FEZ_Pin.Digital RS)
+        public DisplayTask(FEZ_Pin.Digital D4, 
+                           FEZ_Pin.Digital D5, 
+                           FEZ_Pin.Digital D6, 
+                           FEZ_Pin.Digital D7, 
+                           FEZ_Pin.Digital E, 
+                           FEZ_Pin.Digital RS)
             : base()
         {
             lcd = new LCD(LCD.LCDType.LCD4x20, D4, D5, D6, D7, E, RS);
@@ -24,18 +29,17 @@ namespace ChickenCoopAutomation
             lcd.SetCursor(1, 1);
             lcd.Print("Coop of the Future!!");
             lcd.SetCursor(2, 1);
-            lcd.Print("Version 4.0");
+            lcd.Print("Version 5.0");
             lcd.SetCursor(3, 1);
             lcd.Print("Built on 11/27/11");
             lcd.SetCursor(4, 1);
             lcd.Print("Loading");
-            for (int i = 0; i < 13; i++)
+            for (int i = 0; i < 8; i++)
             {
                 lcd.Print(".");
-                Thread.Sleep(300);
+                Thread.Sleep(200);
             }
-            Thread.Sleep(500);
-            lcd.Clear();
+            Thread.Sleep(1000);
 
             while (true)
             {

@@ -10,7 +10,7 @@ namespace ChickenCoopAutomation
         public const int InvalidData = -32767;
 
         public enum DoorStateEnum { Unknown, Open, Closed };
-        public enum DoorOperatingModeEnum { Manual, Automatic };
+        public enum DoorOperatingModeEnum { Unknown, Manual, Automatic };
 
         public DoorStateEnum DoorState { get; set; }
         public DoorOperatingModeEnum DoorOperatingMode { get; set; }
@@ -27,13 +27,17 @@ namespace ChickenCoopAutomation
 
         private CoopData() 
         {
+            DoorState = DoorStateEnum.Unknown;
+            DoorOperatingMode = DoorOperatingModeEnum.Unknown;
+            WaterTemperature = InvalidData;
             CoopTemperature = InvalidData;
             WaterTemperatureSetPoint = InvalidData;
-            WaterTemperature = InvalidData;
-            DoorState = DoorStateEnum.Unknown;
+            CoopTemperatureSetPoint = InvalidData;
+            WaterHeaterOn = false;
+            CoopLightOn = false;
+            FoodLevelLow = InvalidData;
             InstantLightReading = InvalidData;
             AverageLightReading = InvalidData;
-            FoodLevelLow = InvalidData;
             WaterLevel = InvalidData;
         }
 
